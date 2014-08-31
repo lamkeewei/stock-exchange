@@ -1,0 +1,27 @@
+<ul>
+  <li class="user"><a ng-show="user" href=""><i class="fa fa-user"></i>Logged in as {{user.username}}</a></li>
+  <li><a ng-hide="user" href="/login"><i class="fa fa-lock"></i>Login</a></li>
+  <li><a href="/"><i class="fa fa-line-chart"></i>Current Stats</a></li>
+  <li>
+    <a href="" ng-click="collapse = !collapse">
+      <i class="fa fa-archive"></i>
+      Pages
+      <i class="pull-right fa fa-caret-down" ng-show="!collapse"></i>
+      <i class="pull-right fa fa-caret-up" ng-hide="!collapse"></i>
+    </a>
+
+    <ul collapse="!collapse">
+      <li><a href="/pages/1">Page 1</a></li>
+      <li><a href="/pages/2">Page 2</a></li>
+      <li><a href="/pages/3">Page 3</a></li>
+      <li><a href="/pages/4">Page 4</a></li>
+      <li><a href="/pages/5">Page 5</a></li>
+      <li><a href="/pages/6">Page 6</a></li>
+    </ul>
+  </li>
+  <li><a ng-show="user" href="/buy"><i class="fa fa-cloud-upload"></i>Buy</a></li>
+  <li><a ng-show="user" href="/sell"><i class="fa fa-cloud-download"></i>Sell</a></li>
+  <li><a href=""><i class="fa fa-university"></i>Unfulfilled Orders</a></li>
+  <li><a href=""><i class="fa fa-calendar"></i>End Trading Day</a></li>
+  <li><a ng-show="user" href="" ng-click="logout()"><i class="fa fa-lock"></i>Logout</a></li>
+</ul>
