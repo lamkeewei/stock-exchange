@@ -13,25 +13,11 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>SMU</td>
+      <tr ng-repeat="stock in stocks">
+        <td>{{stock.stock}}</td>
         <td>$0</td>
-        <td>$0</td>
-        <td>$0</td>
-      </tr>
-
-      <tr>
-        <td>NUS</td>
-        <td>$0</td>
-        <td>$0</td>
-        <td>$0</td>
-      </tr>
-
-      <tr>
-        <td>NTU</td>
-        <td>$0</td>
-        <td>$0</td>
-        <td>$0</td>
+        <td>${{stock.maxBid}}</td>
+        <td>${{stock.minAsk}}</td>
       </tr>
     </tbody>
   </table>

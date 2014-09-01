@@ -1,0 +1,18 @@
+.unfulfilled-table {
+  table-layout: fixed;
+  
+  td, th {
+    text-align: center;
+  }  
+
+  th {
+    width: 33.3333%;
+  }
+}
+
+#unfulfilled-container {
+  h4 {
+    color: rgba(0,0,0,0.4);
+    font-size: 1.2em;
+  }
+}

@@ -13,6 +13,9 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/pnotify/pnotify.core.css" />
+      <link rel="stylesheet" href="bower_components/pnotify/pnotify.buttons.css" />
+      <link rel="stylesheet" href="bower_components/pnotify/pnotify.history.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -60,6 +63,13 @@
       <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+      <script src="bower_components/pnotify/pnotify.core.js"></script>
+      <script src="bower_components/pnotify/pnotify.buttons.js"></script>
+      <script src="bower_components/pnotify/pnotify.callbacks.js"></script>
+      <script src="bower_components/pnotify/pnotify.confirm.js"></script>
+      <script src="bower_components/pnotify/pnotify.desktop.js"></script>
+      <script src="bower_components/pnotify/pnotify.history.js"></script>
+      <script src="bower_components/pnotify/pnotify.nonblock.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
 
@@ -68,6 +78,7 @@
           <!-- injector:js -->
           <script src="app/buy/buy.controller.js"></script>
           <script src="app/buy/buy.js"></script>
+          <script src="app/buy/buy.service.js"></script>
           <script src="app/login/login.controller.js"></script>
           <script src="app/login/login.js"></script>
           <script src="app/main/main.controller.js"></script>
@@ -76,6 +87,10 @@
           <script src="app/pages/pages.js"></script>
           <script src="app/sell/sell.controller.js"></script>
           <script src="app/sell/sell.js"></script>
+          <script src="app/sell/sell.service.js"></script>
+          <script src="app/stats/stats.service.js"></script>
+          <script src="app/unfulfilled/unfulfilled.controller.js"></script>
+          <script src="app/unfulfilled/unfulfilled.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->

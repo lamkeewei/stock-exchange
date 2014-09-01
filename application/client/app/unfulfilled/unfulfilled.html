@@ -1,0 +1,63 @@
+<div id="unfulfilled-container">  
+  <div ng-repeat="stock in stocks">  
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h3>Unfulfilled Orders for {{stock}}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Unfulfilled Bids</h4>
+        <table class="unfulfilled-table table table-hover table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Date</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="buy in (filteredBuy = (buys | filter: { 'stock': stock }))">
+              <td>{{buy.userId}}</td>
+              <td>{{buy.date | date: 'medium'}}</td>
+              <td>${{buy.price | number: 2}}</td>
+            </tr>
+
+            <tr ng-show="filteredBuy.length < 1">
+              <td colspan="3" class="text-center">No bids submitted</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <h4>Unfulfilled Asks</h4>
+        <table class="unfulfilled-table table table-hover table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Date</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sell in (filteredSell = (sells | filter: { 'stock': stock }))">
+              <td>{{sell.userId}}</td>
+              <td>{{sell.date | date: 'medium'}}</td>
+              <td>${{sell.price | number: 2}}</td>
+            </tr>
+
+            <tr ng-show="filteredSell.length < 1">
+              <td colspan="3" class="text-center">No asks submitted</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
