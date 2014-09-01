@@ -8,7 +8,6 @@ angular.module('applicationApp')
 
     $scope.submitBid = function(form){      
       $scope.submitted = true;
-
       if (form.$valid) {
         Sell.save($scope.bid, function(){
           new $window.PNotify({
@@ -19,7 +18,7 @@ angular.module('applicationApp')
 
           $scope.bid = {
             userId: $rootScope.user && $rootScope.user.username
-          }
+          };
 
           $scope.submitted = false;
         });

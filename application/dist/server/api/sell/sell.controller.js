@@ -2,13 +2,18 @@
 
 var _ = require('lodash');
 var Sell = require('./sell.model');
+var Stats = require('./../stats/stats.controller');
+var Buy = require('./../buy/buy.model');
 
 // Get list of sells
 exports.index = function(req, res) {
-  Sell.find(function (err, sells) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, sells);
-  });
+  Sell
+    .find()
+    .where('match').equals(null)
+    .exec(function (err, sells) {
+      if(err) { return handleError(res, err); }
+      return res.json(200, sells);
+    });
 };
 
 // Get a single sell
@@ -31,10 +36,28 @@ exports.getByUser = function(req, res){
 
 // Creates a new sell in the DB.
 exports.create = function(req, res) {
-  Sell.create(req.body, function(err, sell) {
-    if(err) { return handleError(res, err); }
-    return res.json(201, sell);
-  });
+  Stats.maxBid(req.body.stock)
+    .then(function(maxBid){
+      if (maxBid && req.body.price <= maxBid.price) {
+        req.body.match = maxBid._id;
+        var newSell = new Sell(req.body);
+        maxBid.match = newSell._id;
+
+        maxBid.save(function(err){
+          if(err) { return handleError(res, err); }
+
+          newSell.save(function(err, sell) {
+            if(err) { return handleError(res, err); }
+            return res.json(201, sell);
+          });
+        });
+      } else {        
+        Sell.create(req.body, function(err, sell) {
+          if(err) { return handleError(res, err); }
+          return res.json(201, sell);
+        });
+      }
+    });
 };
 
 // Updates an existing sell in the DB.
@@ -60,6 +83,14 @@ exports.destroy = function(req, res) {
       if(err) { return handleError(res, err); }
       return res.send(204);
     });
+  });
+};
+
+// Delete all
+exports.deleteAll = function(req, res){
+  Sell.find({}).remove(function(err){
+    if(err) { return handleError(res, err); }
+    res.send(200);
   });
 };
 

@@ -9,6 +9,13 @@ angular.module('applicationApp')
         params: {
           action: 'user'
         }
+      },
+
+      deleteAll: {
+        method: 'DELETE',
+        params: {
+          action: 'all'
+        }
       }
     });
   });

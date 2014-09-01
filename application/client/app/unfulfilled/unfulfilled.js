@@ -8,16 +8,7 @@ angular.module('applicationApp')
         views: {
           'content@': {
             controller: 'UnfulfilledCtrl',
-            templateUrl: 'app/unfulfilled/unfulfilled.html',
-            resolve: {
-              buys: ['Buy', function(Buy){
-                return Buy.query();
-              }],
-
-              sells: ['Sell', function(Sell){
-                return Sell.query();
-              }]
-            }
+            templateUrl: 'app/unfulfilled/unfulfilled.html'
           }
         }
       });

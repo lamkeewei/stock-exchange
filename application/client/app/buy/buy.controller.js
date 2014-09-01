@@ -15,14 +15,20 @@ angular.module('applicationApp')
             title: 'Buy Bid Success!',
             text: 'Your buy bid has been submitted successfully!',
             type: 'success'
+          });          
+        }, function(err){
+          new $window.PNotify({
+            title: 'Buy Bid Unsuccessful!',
+            text: err.data.message,
+            type: 'error'
           });
-
-          $scope.bid = {
-            userId: $rootScope.user && $rootScope.user.username
-          }
-
-          $scope.submitted = false;
         });
+
+        $scope.bid = {
+          userId: $rootScope.user && $rootScope.user.username
+        };
+
+        $scope.submitted = false;
       }
     };
   });

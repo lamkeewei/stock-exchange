@@ -2,13 +2,19 @@
 
 var _ = require('lodash');
 var Buy = require('./buy.model');
+var Stats = require('./../stats/stats.controller');
+var Sell = require('./../sell/sell.model');
+var Q = require('q');
 
 // Get list of buys
 exports.index = function(req, res) {
-  Buy.find(function (err, buys) {
-    if(err) { return handleError(res, err); }
-    return res.json(200, buys);
-  });
+  Buy
+    .find()
+    .where('match').equals(null)
+    .exec(function (err, buys) {
+      if(err) { return handleError(res, err); }
+      return res.json(200, buys);
+    });
 };
 
 // Get a single buy
@@ -31,10 +37,35 @@ exports.getByUser = function(req, res){
 
 // Creates a new buy in the DB.
 exports.create = function(req, res) {
-  Buy.create(req.body, function(err, buy) {
-    if(err) { return handleError(res, err); }
-    return res.json(201, buy);
-  });
+  Stats.getUserAmount(req.body.userId)
+    .then(function(amount){
+      if (amount + req.body.price > 1000000) {
+        return res.send(500, { message: 'Credit limit exceeded.'});
+      }
+
+      Stats.minAsk(req.body.stock)
+        .then(function(minAsk){
+          if(minAsk && req.body.price >= minAsk.price) {
+            req.body.match = minAsk._id;
+            var newBuy = new Buy(req.body);
+
+            minAsk.match = newBuy._id;
+            minAsk.save(function(err){
+              if(err) { return handleError(res, err); }
+
+              newBuy.save(function(err, buy){
+                if(err) { return handleError(res, err); }
+                return res.json(201, buy);
+              });
+            });
+          } else {        
+            Buy.create(req.body, function(err, buy) {
+              if(err) { return handleError(res, err); }
+              return res.json(201, buy);
+            });
+          }
+        });
+    });
 };
 
 // Updates an existing buy in the DB.
@@ -60,6 +91,14 @@ exports.destroy = function(req, res) {
       if(err) { return handleError(res, err); }
       return res.send(204);
     });
+  });
+};
+
+// Delete all
+exports.deleteAll = function(req, res){
+  Buy.find({}).remove(function(err){
+    if(err) { return handleError(res, err); }
+    res.send(200);
   });
 };
 

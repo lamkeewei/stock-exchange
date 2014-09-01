@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('applicationApp')
-  .controller('UnfulfilledCtrl', function ($scope, buys, sells) {
-    $scope.buys = buys;
-    $scope.sells = sells;
+  .controller('UnfulfilledCtrl', function ($scope, Buy, Sell) {
+    $scope.buys = Buy.query();
+    $scope.sells = Sell.query();
     $scope.stocks = ['SMU', 'NUS', 'NTU'];
     $scope.filtered = {};
   });
