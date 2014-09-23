@@ -16,7 +16,7 @@ Here's a list of endpoints used by the AngularJS frontend. Just reimplement for 
 | Endpoint | HTTP Method | Description |
 | :------- | :---------: | :---------- |
 | /api/buys | GET | Retrieve an array of all buy bids | 
-| /api/buys/user/:userId | GET | Retrieve the bids of a particular user | 
+| /api/buys/user/_:userId_ | GET | Retrieve the bids of a particular user | 
 | /api/buys | POST | Add a buy bid | 
 | /api/buys/all | DELETE | Delete all bids (used for ending the trade day) | 
 | /api/sells | GET | Retrieve an array of sell asks | 
