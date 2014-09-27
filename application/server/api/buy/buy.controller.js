@@ -58,7 +58,7 @@ exports.create = function(req, res) {
                 return res.json(201, buy);
               });
             });
-          } else {        
+          } else {
             Buy.create(req.body, function(err, buy) {
               if(err) { return handleError(res, err); }
               return res.json(201, buy);
