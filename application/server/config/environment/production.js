@@ -15,6 +15,9 @@ module.exports = {
 
   // MongoDB connection options
   mongo: {
+    // db:   {
+    //         replset: { rs_name: 'rs0' }
+    // },
     uri:    process.env.MONGOLAB_URI ||
             process.env.MONGOHQ_URL ||
             process.env.OPENSHIFT_MONGODB_DB_URL+process.env.OPENSHIFT_APP_NAME ||

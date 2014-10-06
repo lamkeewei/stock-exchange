@@ -36,8 +36,7 @@ var all = {
   mongo: {
     options: {
       db: {
-        safe: true,
-        replset: { rs_name: 'rs0' }
+        safe: true        
       }
     }
   },
