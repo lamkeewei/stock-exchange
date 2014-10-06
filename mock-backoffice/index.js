@@ -1,23 +1,27 @@
 'use strict';
 
 var express = require('express');
+var low = require('lowdb');
+var db = low(__dirname + '/db/db.json');
+
 var app = express();
 // Config
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-var transactions = [];
-
 var clear = function (req, res) {
   // Clear transaction
-  transactions.length = [];
+  db('transactions').remove();
   res.header('Content-Type', 'application/xml');
   res.render('xmlReply', { reply: true });
 };
 
 var processTransaction = function (req, res) {  
   var txnDescription = req.query.transactionDescription;
-  transactions.push(txnDescription);
+  
+  db('transactions').push({ 
+    description: txnDescription 
+  });
 
   res.header('Content-Type', 'application/xml');
   res.render('xmlReply', { reply: true });
@@ -31,6 +35,7 @@ var view = function (req, res) {
   }
 
   res.header('Content-Type', 'text/html');
+  var transactions = db('transactions').value();
   res.render('viewTransaction', { transactions: transactions });
 };
 
