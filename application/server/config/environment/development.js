@@ -9,5 +9,10 @@ module.exports = {
          'mongodb://localhost/application-dev'
   },
 
+  postgres: {
+    dbname: 'stocks_exchange',
+    username: 'postgres'
+  },
+
   seedDB: true
 };
