@@ -66,6 +66,12 @@ public class Matching {
                     "jdbc:postgresql://127.0.0.1:5432/stocks_exchange", "postgres",
                     "");
 
+            connection.setAutoCommit(false);
+
+            String updateBid = "UPDATE bids SET \"matchedAsk\"=?, \"updatedAt\"=?, status='matched' WHERE id=?;";
+            String updateAsk = "UPDATE asks SET \"matchedBuy\"=?, \"updatedAt\"=?, status='matched' WHERE id=?;";
+            String updateMatch = "INSERT INTO matches (bid_id, ask_id, date, price, stock) values(?,?,?,?,?);";
+
             // get the current time rounded to the nearest second
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.MILLISECOND, 0);
@@ -147,7 +153,7 @@ public class Matching {
                 }
 
                 // a list of matches 
-                ArrayList<Match> matches = new ArrayList<Match>(numBidRecords);
+                // ArrayList<Match> matches = new ArrayList<Match>(numBidRecords);
 
                 // go through the bids
                 for (int j = 0; j < allArray.size(); j++) {
@@ -168,7 +174,29 @@ public class Matching {
 
                             // add to matches list
                             Match match = new Match(bid, matchedAsk, bid.getDate(), matchedAsk.getPrice());
-                            matches.add(match);
+
+                            preparedStatement = connection.prepareStatement(updateBid);
+                            preparedStatement.setInt(1, match.getAskId());
+                            preparedStatement.setTimestamp(2, (Timestamp) match.getDate());
+                            preparedStatement.setInt(3, match.getBuyId());
+                            preparedStatement.executeUpdate();
+
+                            preparedStatement = connection.prepareStatement(updateAsk);
+                            preparedStatement.setInt(1, match.getBuyId());
+                            preparedStatement.setTimestamp(2, (Timestamp) match.getDate());
+                            preparedStatement.setInt(3, match.getAskId());
+                            preparedStatement.executeUpdate();
+
+                            preparedStatement = connection.prepareStatement(updateMatch);
+                            preparedStatement.setInt(1, match.getBuyId());
+                            preparedStatement.setInt(2, match.getAskId());
+                            preparedStatement.setTimestamp(3, (Timestamp) match.getDate());
+                            preparedStatement.setInt(4, match.getPrice());
+                            preparedStatement.setString(5, match.getStock());
+                            preparedStatement.executeUpdate();
+
+                            // only commit when all rows can be confirmed for the update 
+                            connection.commit();
                         }
 
                     } else {
@@ -186,23 +214,52 @@ public class Matching {
 
                             // add to matches list
                             Match match = new Match(matchedBid, ask, ask.getDate(), matchedBid.getPrice());
-                            matches.add(match);
+
+                            preparedStatement = connection.prepareStatement(updateBid);
+                            preparedStatement.setInt(1, match.getAskId());
+                            preparedStatement.setTimestamp(2, (Timestamp) match.getDate());
+                            preparedStatement.setInt(3, match.getBuyId());
+                            preparedStatement.executeUpdate();
+
+                            preparedStatement = connection.prepareStatement(updateAsk);
+                            preparedStatement.setInt(1, match.getBuyId());
+                            preparedStatement.setTimestamp(2, (Timestamp) match.getDate());
+                            preparedStatement.setInt(3, match.getAskId());
+                            preparedStatement.executeUpdate();
+
+                            preparedStatement = connection.prepareStatement(updateMatch);
+                            preparedStatement.setInt(1, match.getBuyId());
+                            preparedStatement.setInt(2, match.getAskId());
+                            preparedStatement.setTimestamp(3, (Timestamp) match.getDate());
+                            preparedStatement.setInt(4, match.getPrice());
+                            preparedStatement.setString(5, match.getStock());
+                            preparedStatement.executeUpdate();
+
+                            // only commit when all rows can be confirmed for the update 
+                            connection.commit();
                         }
 
                     }
                 }
 
-                // check out what are the matches
-                for (int j = 0; j < matches.size(); j++) {
-                    System.out.println(matches.get(j));
-                }
+//                // check out what are the matches
+//                for (int j = 0; j < matches.size(); j++) {
+//                    System.out.println(matches.get(j));
+//                }
 
                 // now that matches are determined, insert into matches table and update bids and asks table
-                performUpdates(matches);
-
+                // performUpdates(matches);
             }
 
         } catch (SQLException e) {
+
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    System.out.println("Failed to rollback");
+                }
+            }
 
             System.out.println("Connection Failed! Check output console");
             e.printStackTrace();
@@ -268,7 +325,7 @@ public class Matching {
                 preparedStatement.setInt(4, match.getPrice());
                 preparedStatement.setString(5, match.getStock());
                 preparedStatement.executeUpdate();
-                
+
                 // only commit when all rows can be confirmed for the update 
                 connection.commit();
 
