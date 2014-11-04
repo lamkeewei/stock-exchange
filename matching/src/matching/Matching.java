@@ -51,9 +51,9 @@ public class Matching {
 //
 //    System.out.println("PostgreSQL JDBC Driver Registered!");
         ArrayList<String> STOCKLIST = new ArrayList<String>(3);
-        STOCKLIST.add("SMU");
-        STOCKLIST.add("NTU");
-        STOCKLIST.add("NUS");
+        STOCKLIST.add("smu");
+        STOCKLIST.add("ntu");
+        STOCKLIST.add("nus");
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -77,7 +77,7 @@ public class Matching {
             cal.set(Calendar.MILLISECOND, 0);
             Date now = cal.getTime();
             Timestamp timeNow = new Timestamp(now.getTime());
-            System.out.println("time " + timeNow);
+//            System.out.println("time " + timeNow);
 
             for (int i = 0; i < STOCKLIST.size(); i++) {
 
@@ -148,9 +148,9 @@ public class Matching {
                 PriorityQueue<Ask> asksQueue = new PriorityQueue<Ask>(numAskRecords, askComparator);
 
                 // check out what are the things
-                for (int j = 0; j < allArray.size(); j++) {
-                    System.out.println(allArray.get(j));
-                }
+//                for (int j = 0; j < allArray.size(); j++) {
+//                    System.out.println(allArray.get(j));
+//                }
 
                 // a list of matches 
                 // ArrayList<Match> matches = new ArrayList<Match>(numBidRecords);

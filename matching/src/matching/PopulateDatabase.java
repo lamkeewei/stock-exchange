@@ -29,7 +29,7 @@ public class PopulateDatabase {
     public static void main(String[] argv) {
 
         // change this setting to your liking
-        int ROWS_TO_GENERATE = 1000000;
+        int ROWS_TO_GENERATE = 1000;
 
         ArrayList<String> STOCKLIST = new ArrayList<String>(3);
         STOCKLIST.add("smu");
@@ -51,7 +51,7 @@ public class PopulateDatabase {
 //            System.out.println("time " + timeNow);
             Random randomGenerator = new Random();
 
-            for (int i = 0; i < ROWS_TO_GENERATE; i++) {
+            for (int i = 0; i < ROWS_TO_GENERATE*2; i++) {
 
                 // get the current time rounded to the nearest second
                 Calendar cal = Calendar.getInstance();
@@ -64,7 +64,12 @@ public class PopulateDatabase {
 
                 int randPrice = 10 + randomGenerator.nextInt(10);
 
-                preparedStatement = connection.prepareStatement(insertBid);
+                if (randomGenerator.nextBoolean()) {
+                    preparedStatement = connection.prepareStatement(insertBid);
+                } else {
+                    preparedStatement = connection.prepareStatement(insertAsk);
+                }
+                
                 preparedStatement.setInt(1, i + 1);
                 preparedStatement.setString(2, stock);
                 preparedStatement.setInt(3, randPrice);
@@ -76,30 +81,6 @@ public class PopulateDatabase {
                 preparedStatement.executeUpdate();
             }
 
-            for (int i = 0; i < ROWS_TO_GENERATE; i++) {
-
-                // get the current time rounded to the nearest second
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.MILLISECOND, 0);
-                Date now = cal.getTime();
-                Timestamp timeNow = new Timestamp(now.getTime());
-
-                int randStockIndex = randomGenerator.nextInt(STOCKLIST.size());
-                String stock = STOCKLIST.get(randStockIndex);
-
-                int randPrice = 10 + randomGenerator.nextInt(10);
-
-                preparedStatement = connection.prepareStatement(insertAsk);
-                preparedStatement.setInt(1, i + 1);
-                preparedStatement.setString(2, stock);
-                preparedStatement.setInt(3, randPrice);
-                preparedStatement.setString(4, "user" + (i + 1));
-                preparedStatement.setTimestamp(5, timeNow);
-                preparedStatement.setString(6, "not matched");
-                preparedStatement.setTimestamp(7, timeNow);
-                preparedStatement.setTimestamp(8, timeNow);
-                preparedStatement.executeUpdate();
-            }
 
         } catch (SQLException e) {
 
