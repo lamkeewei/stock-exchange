@@ -10,18 +10,20 @@ angular.module('applicationApp')
       $scope.submitted = true;
 
       if (form.$valid) {
-        Buy.save($scope.bid, function(){
-          new $window.PNotify({
-            title: 'Buy Bid Success!',
-            text: 'Your buy bid has been submitted successfully!',
-            type: 'success'
-          });          
-        }, function(err){
-          new $window.PNotify({
-            title: 'Buy Bid Unsuccessful!',
-            text: err.data.message,
-            type: 'error'
-          });
+        Buy.save($scope.bid, function(data){
+          if (data.status === 'success') {
+            new $window.PNotify({
+              title: 'Buy Bid Success!',
+              text: 'Your buy bid has been submitted successfully!',
+              type: 'success'
+            });          
+          } else {
+            new $window.PNotify({
+              title: 'Buy Bid Unsuccessful!',
+              text: err.data.message,
+              type: 'error'
+            });
+          }          
         });
 
         $scope.bid = {

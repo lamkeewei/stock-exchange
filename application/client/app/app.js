@@ -14,6 +14,10 @@ angular.module('applicationApp', [
     $locationProvider.html5Mode(true);
   })
 
+  .run(function($cookieStore, $rootScope){
+    $rootScope.user = $cookieStore.get('loginUser');
+  })
+
   .run(function ($rootScope, $location) {
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
