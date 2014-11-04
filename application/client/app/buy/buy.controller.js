@@ -11,6 +11,8 @@ angular.module('applicationApp')
 
       if (form.$valid) {
         Buy.save($scope.bid, function(data){
+          console.log(data);
+
           if (data.status === 'success') {
             new $window.PNotify({
               title: 'Buy Bid Success!',
@@ -20,7 +22,7 @@ angular.module('applicationApp')
           } else {
             new $window.PNotify({
               title: 'Buy Bid Unsuccessful!',
-              text: err.data.message,
+              text: data.status,
               type: 'error'
             });
           }          

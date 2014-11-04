@@ -1,6 +1,10 @@
 var db = require('../../config/sequelize');
 var Bid = db.Bid;
 var User = db.User;
+var sequelize = db.sequelize;
+var Sequelize = require('sequelize');
+var Q = require('q');
+// var matcher = require('./../matcher/matcher.sql');
 
 exports.index = function(req, res) {
   Bid
@@ -25,14 +29,32 @@ exports.create = function(req, res) {
           return res.json(201, { status: 'not enough credit'});
         }
 
-        // Update user credit
-        user.creditUsed = newCredit;
-        user.save();
+        // Wrap in a transaction
+        sequelize.transaction(function(t){
+          return User.update({ 
+            creditUsed: newCredit, 
+            version: user.version + 1 
+          }, {
+            where: {
+              version: user.version,
+              userId: user.userId
+            },
+            transaction: t
+          }).then(function(d){            
+            // Check if the number of rows affected is greater than 1
+            // If it is throw an error to rollback
+            if (d < 1) { throw new Error(); }
 
-        Bid.create(req.body)
-        .success(function(){
-          res.json(201, { status: 'success'});
-        });        
+            // No change - good to go...
+            return Bid.create(req.body, { transaction: t });                    
+          });
+        }).then(function(){
+          // Success
+          res.json(201, { status: 'success' });
+        }).catch(function(error){
+          // Rollback
+          res.json(201, { status: 'An error has occurred!' });
+        });
       } else {
         // New user
         User.create({ userId: data.userId, creditUsed: data.price * 1000 });
@@ -41,9 +63,11 @@ exports.create = function(req, res) {
           res.json(201, { status: 'success'});
         });
       }
+
+      // matcher.attemptMatch(req.body.stock);
     });
 };
 
-function handleError(res, err) {
+var handleError = function (res, err) {
   return res.send(500, err);
 };
