@@ -6,7 +6,6 @@ module.exports = function(sequelize, DataTypes) {
     userId: DataTypes.STRING,
     date: DataTypes.DATE,
     status: DataTypes.STRING,
-    version: { type: DataTypes.INTEGER, defaultValue: 0 },
     matchedBuy: DataTypes.INTEGER
   });
 }

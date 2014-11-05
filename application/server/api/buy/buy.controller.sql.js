@@ -27,30 +27,23 @@ exports.create = function(req, res) {
         var newCredit = user.creditUsed + data.price * 1000;
         if (newCredit >= 1000000) {
           return res.json(201, { status: 'not enough credit'});
-        }
+        }        
 
         // Wrap in a transaction
-        sequelize.transaction(function(t){
-          return User.update({ 
-            creditUsed: newCredit, 
-            version: user.version + 1 
-          }, {
-            where: {
-              version: user.version,
-              userId: user.userId
-            },
+        sequelize.transaction({
+          isolationLevel: Sequelize.Transaction.SERIALIZABLE || 'SERIALIZABLE'
+        }, function(t){
+          return User.update({ creditUsed: newCredit }, 
+          {
+            where: { userId: user.userId },
             transaction: t
-          }).then(function(d){            
-            // Check if the number of rows affected is greater than 1
-            // If it is throw an error to rollback
-            if (d < 1) { throw new Error(); }
-
-            // No change - good to go...
+          }).then(function(d){
             return Bid.create(req.body, { transaction: t });                    
           });
         }).then(function(){
           // Success
           res.json(201, { status: 'success' });
+
           matcher.attemptMatch(req.body.stock);
         }).catch(function(error){
           // Rollback
