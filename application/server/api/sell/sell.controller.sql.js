@@ -1,5 +1,6 @@
 var db = require('../../config/sequelize');
 var Ask = db.Ask;
+var matcher = require('./../matcher/matcher.sql');
 
 exports.index = function(req, res) {
   Ask
@@ -18,6 +19,7 @@ exports.create = function(req, res) {
   
   Ask.create(req.body)
     .success(function(){
+      matcher.attemptMatch(req.body.stock);
       res.send(201);
     });
 };

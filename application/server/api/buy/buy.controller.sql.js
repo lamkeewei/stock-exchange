@@ -4,7 +4,7 @@ var User = db.User;
 var sequelize = db.sequelize;
 var Sequelize = require('sequelize');
 var Q = require('q');
-// var matcher = require('./../matcher/matcher.sql');
+var matcher = require('./../matcher/matcher.sql');
 
 exports.index = function(req, res) {
   Bid
@@ -51,6 +51,7 @@ exports.create = function(req, res) {
         }).then(function(){
           // Success
           res.json(201, { status: 'success' });
+          matcher.attemptMatch(req.body.stock);
         }).catch(function(error){
           // Rollback
           res.json(201, { status: 'An error has occurred!' });
@@ -61,10 +62,9 @@ exports.create = function(req, res) {
         Bid.create(req.body)
         .success(function(){
           res.json(201, { status: 'success'});
+          matcher.attemptMatch(req.body.stock);
         });
-      }
-
-      // matcher.attemptMatch(req.body.stock);
+      }      
     });
 };
 
