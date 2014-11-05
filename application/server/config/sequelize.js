@@ -5,16 +5,12 @@ if (!global.hasOwnProperty('db')) {
   var sequelize;
 
   if (process.env.DB_TYPE === 'mysql') {
-    sequelize = new Sequelize(config.mysql.dbname, config.mysql.username, null, {
-      host: config.mysql.host,
-      port: config.mysql.port,
+    sequelize = new Sequelize(config.mysql.uri, {
       maxConcurrentRequest: 200,
       dialect: 'mysql'
     });
   } else {    
-    sequelize = new Sequelize(config.postgres.dbname, config.postgres.username, null, {
-      host: config.postgres.host,
-      port: config.postgres.port,
+    sequelize = new Sequelize(config.postgres.uri, {
       maxConcurrentRequest: 200,
       dialect: 'postgres'
     });

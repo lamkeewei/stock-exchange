@@ -10,17 +10,11 @@ module.exports = {
   },
 
   postgres: {
-    dbname: 'stocks_exchange',
-    username: 'postgres',
-    host: 'localhost',
-    port: 5432
+    uri: 'postgresql://postgres@localhost:5432/stocks_exchange'
   },
 
   mysql: {
-    dbname: 'stocks_exchange',
-    username: 'root',
-    host: 'localhost',
-    port: 3306
+    uri: 'mysql://root@localhost:3306/stocks_exchange'
   },
 
   seedDB: true
