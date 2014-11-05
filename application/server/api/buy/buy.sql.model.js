@@ -6,6 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     userId: DataTypes.STRING,
     date: DataTypes.DATE,
     status: DataTypes.STRING,
-    matchedAsk: DataTypes.INTEGER
+    matchedAsk: DataTypes.INTEGER,
+    version: { type: DataTypes.INTEGER, default: 0 }
   });
 }

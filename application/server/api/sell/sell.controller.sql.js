@@ -19,9 +19,17 @@ exports.create = function(req, res) {
   
   Ask.create(req.body)
     .success(function(){
-      matcher.attemptMatch(req.body.stock);
       res.send(201);
+      matcher.attemptMatch(req.body.stock);
     });
+};
+
+exports.getLowestAsk = function (req, res) {
+  Ask.findAll({ 
+    limit: 1, order: ['price', 'date'], where: { matchedBuy: null, stock: req.params.stock } 
+  }).success(function(asks){
+    return res.json(200, asks);
+  });
 };
 
 function handleError(res, err) {

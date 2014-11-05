@@ -1,10 +1,40 @@
 var db = require('../../config/sequelize');
 var Bid = db.Bid;
 var User = db.User;
+var MatchBuy = db.MatchBuy;
 var sequelize = db.sequelize;
 var Sequelize = require('sequelize');
 var Q = require('q');
 var matcher = require('./../matcher/matcher.sql');
+var http = require('http');
+var chainer = new Sequelize.Utils.QueryChainer
+
+var backendWorkers = ['localhost:3031', 'localhost:3032']; 
+
+var logRejected = function (bid) {
+  var str = JSON.stringify(bid);
+  console.log('log: ' + str);
+
+  var host = 0;
+  var send = function(str){
+    var url = 'http://' + backendWorkers[host++%2] + '/log/rejected?data=' + str;
+    console.log('try log rejected: ' + url);
+    http.get(url, function(response){
+      console.log("Backend worker response: " + response.statusCode);
+      if (response.statusCode === 500) {
+        setTimeout(function(){
+          send(str) 
+        }, 1000);  
+      }
+    }).on('error', function(e){
+      setTimeout(function(){
+        send(str) 
+      }, 1000);
+    });
+  };
+
+  send(str);
+};
 
 exports.index = function(req, res) {
   Bid
@@ -17,21 +47,43 @@ exports.index = function(req, res) {
     });
 };
 
+exports.endTradingDay = function (req, res) {
+  var sql = 'truncate table users;';  
+  chainer
+    .add(sequelize.query('truncate table users'))
+    .add(sequelize.query('truncate table asks'))
+    .add(sequelize.query('truncate table bids'))
+    .add(sequelize.query('truncate table matchBuys'))
+    .add(sequelize.query('truncate table matchAsks'));
+
+  chainer
+    .run()
+    .success(function(){
+      return res.json(200, { status: 'success' });
+    })
+    .error(function(){
+      return res.json(500, { status: 'error' });
+    });
+};
+
 // Creates a new sell in the DB.
 exports.create = function(req, res) {
   var data = req.body;
   data.date = new Date();
-  User.find({ userId: data.userId })
-    .success(function(user){      
+
+  User.find({ where: { userId: data.userId } })
+    .success(function(user){
       if (user) {
         var newCredit = user.creditUsed + data.price * 1000;
         if (newCredit >= 1000000) {
+          data.creditUsed = newCredit;
+          logRejected(data);
           return res.json(201, { status: 'not enough credit'});
         }        
 
         // Wrap in a transaction
         sequelize.transaction({
-          isolationLevel: Sequelize.Transaction.SERIALIZABLE || 'SERIALIZABLE'
+          // isolationLevel: Sequelize.Transaction.SERIALIZABLE || 'SERIALIZABLE'
         }, function(t){
           return User.update({ creditUsed: newCredit }, 
           {
@@ -51,13 +103,34 @@ exports.create = function(req, res) {
         });
       } else {
         // New user
-        User.create({ userId: data.userId, creditUsed: data.price * 1000 });
-        Bid.create(req.body)
-        .success(function(){
-          res.json(201, { status: 'success'});
-          matcher.attemptMatch(req.body.stock);
-        });
+        User.create({ userId: data.userId, creditUsed: data.price * 1000 })
+          .success(function(){
+            Bid.create(req.body)
+            .success(function(){
+              res.json(201, { status: 'success'});
+              matcher.attemptMatch(req.body.stock);
+            }).error(function(){
+              res.json(201, { status: 'error'});
+            });
+          }).error(function(){
+            res.json(201, { status: 'error'});
+          });;        
       }      
+    });
+};
+
+exports.getHighestBid = function (req, res) {
+  Bid.findAll({ 
+    limit: 1, order: [['price', 'DESC'], ['date', 'ASC']], where: { matchedAsk: null, stock: req.params.stock } 
+  }).success(function(bids){
+    return res.json(200, bids);
+  });
+};
+
+exports.getLatestPrice = function (req, res) {
+  MatchBuy.findAll({ order: [['date', 'DESC']], limit: 1, where: { stock: req.params.stock } })
+    .then(function(bid){
+      return res.json(200, bid);
     });
 };
 

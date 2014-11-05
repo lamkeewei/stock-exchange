@@ -15,6 +15,7 @@ module.exports = {
 
   mysql: {
     uri: 'mysql://root@localhost:3306/stocks_exchange'
+    // uri: 'mysql://root@192.168.2.77:7000/stocks_exchange'
   },
 
   seedDB: true

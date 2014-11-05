@@ -1,4 +1,29 @@
 <div id="unfulfilled-container">  
+    <div class="row">
+      <div class="col-md-12">
+        <div class="page-header">
+          <h3>Users</h3>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <table class="unfulfilled-table table-condensed table table-hover table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Credit Used</th>
+            </tr>
+          </thead>
+          <tbody ng-repeat="user in users">
+            <td>{{user.userId}}</td>
+            <td>${{user.creditUsed | number: 0}}</td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   <div ng-repeat="stock in stocks">  
     <div class="row">
       <div class="col-md-12">
@@ -11,7 +36,7 @@
     <div class="row">
       <div class="col-md-12">
         <h4>Unfulfilled Bids</h4>
-        <table class="unfulfilled-table table table-hover table-striped table-bordered">
+        <table class="unfulfilled-table table-condensed table table-hover table-striped table-bordered">
           <thead>
             <tr>
               <th>User ID</th>
@@ -20,7 +45,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="buy in (filteredBuy = (buys | filter: { 'stock': stock }))">
+            <tr ng-repeat="buy in (filteredBuy = (buys | filter: { 'stock': stock } | orderBy: ['date','price']))">
               <td>{{buy.userId}}</td>
               <td>{{buy.date | date: 'medium'}}</td>
               <td>${{buy.price | number: 2}}</td>
@@ -37,7 +62,7 @@
     <div class="row">
       <div class="col-md-12">
         <h4>Unfulfilled Asks</h4>
-        <table class="unfulfilled-table table table-hover table-striped table-bordered">
+        <table class="unfulfilled-table table-condensed table table-hover table-striped table-bordered">
           <thead>
             <tr>
               <th>User ID</th>
@@ -46,7 +71,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-repeat="sell in (filteredSell = (sells | filter: { 'stock': stock }))">
+            <tr ng-repeat="sell in (filteredSell = (sells | filter: { 'stock': stock } | orderBy: ['date', 'price']))">
               <td>{{sell.userId}}</td>
               <td>{{sell.date | date: 'medium'}}</td>
               <td>${{sell.price | number: 2}}</td>

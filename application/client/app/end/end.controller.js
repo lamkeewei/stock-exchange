@@ -1,13 +1,9 @@
 'use strict';
 
 angular.module('applicationApp')
-  .controller('EndCtrl', function ($scope, Buy, Sell, $q, $window) {
+  .controller('EndCtrl', function ($scope, Buy,$window) {
     $scope.endTradingDay = function(){
-      var promises = [];
-      promises.push(Buy.deleteAll().$promise);
-      promises.push(Sell.deleteAll().$promise);
-
-      $q.all(promises);        
+      Buy.endTradingDay();
     };
 
     $scope.endTradingDay();

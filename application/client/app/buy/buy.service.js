@@ -2,7 +2,7 @@
 
 angular.module('applicationApp')
   .factory('Buy', function ($resource) {
-    return $resource('/api/buys/:action:id/:userId', {}, {
+    return $resource('/api/buys/:action:id/:userId:stock', {}, {
       getByUserId: {
         method: 'GET',
         isArray: true,
@@ -11,10 +11,26 @@ angular.module('applicationApp')
         }
       },
 
-      deleteAll: {
-        method: 'DELETE',
+      endTradingDay: {
+        method: 'GET',
         params: {
-          action: 'all'
+          action: 'end'
+        }
+      },
+
+      getLatestPrice: {
+        method: 'GET',
+        isArray: true,
+        params: {
+          action: 'price'
+        }
+      },
+
+      getHighestBid: {
+        method: 'GET',
+        isArray: true,
+        params: {
+          action: 'highest'
         }
       }
     });
