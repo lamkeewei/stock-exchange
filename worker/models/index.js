@@ -8,8 +8,15 @@ if (!global.hasOwnProperty('db')) {
       maxConcurrentRequest: 5000,
       dialect: 'mysql'
     });
+
+    // sequelize = new Sequelize('stocks_exchange', 'root', null, {
+    //   host: '192.168.2.69',
+    //   port: '3307',
+    //   maxConcurrentRequest: 5000,
+    //   dialect: 'mariadb'
+    // });
   } else {    
-    sequelize = new Sequelize('postgresql://postgres@localhost:5432/stocks_exchange', {
+    sequelize = new Sequelize('postgresql://postgres:password@192.168.2.100:5432/stocks_exchange', {
       maxConcurrentRequest: 5000,
       dialect: 'postgres'
     });

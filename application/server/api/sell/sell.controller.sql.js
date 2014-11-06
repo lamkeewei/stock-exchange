@@ -17,7 +17,7 @@ exports.index = function(req, res) {
 exports.create = function(req, res) {
   req.body.date = new Date();
   
-  Ask.create(req.body)
+  Ask.create(req.body, { returning: false })
     .success(function(){
       res.send(201);
       matcher.attemptMatch(req.body.stock);

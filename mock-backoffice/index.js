@@ -43,15 +43,15 @@ var checkCredentials = function(req, res, next) {
   var teamId = req.query.teamId;
   var teamPassword = req.query.teamPassword;
 
-  if (teamId !== 'G3T7' || teamPassword !== 'abc') {
+  if (teamId !== 'G3T7' || teamPassword !== 'lime') {
     return res.status(404).send('Wrong ID or Password');
   }
 
   next();
 };
 
-app.get('/ProcessTransaction.aspx', checkCredentials, processTransaction);
-app.post('/ProcessTransaction.aspx', checkCredentials, processTransaction);
+app.get('/aabo/Service.asmx/ProcessTransaction', checkCredentials, processTransaction);
+app.post('/aabo/Service.asmx/ProcessTransaction', checkCredentials, processTransaction);
 
 app.get('/Clear.aspx', checkCredentials, clear);
 app.post('/Clear.aspx', checkCredentials, clear);

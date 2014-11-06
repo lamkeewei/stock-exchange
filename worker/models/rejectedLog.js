@@ -5,9 +5,6 @@ module.exports = function(sequelize, DataTypes) {
     price: DataTypes.INTEGER,
     userId: DataTypes.STRING,
     date: DataTypes.DATE,
-    status: DataTypes.STRING,
-    matchedAsk: DataTypes.INTEGER,
-    version: DataTypes.INTEGER,
     creditUsed: DataTypes.INTEGER
   });
 }

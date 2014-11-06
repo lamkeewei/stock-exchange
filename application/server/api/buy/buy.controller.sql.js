@@ -17,19 +17,22 @@ var logRejected = function (bid) {
 
   var host = 0;
   var send = function(str){
-    var url = 'http://' + backendWorkers[host++%2] + '/log/rejected?data=' + str;
+    var hostPort = backendWorkers[host++%2].split(':');
+    var url = 'http://' + hostPort.join(':') + '/log/rejected?data=' + str;
+    console.log('try send: ' + url);
+
     console.log('try log rejected: ' + url);
-    http.get(url, function(response){
+    http.get({ host: 'localhost', port: hostPort[1], path: '/log/rejected?data=' + str, agent: false}, function(response){
       console.log("Backend worker response: " + response.statusCode);
       if (response.statusCode === 500) {
-        setTimeout(function(){
+        setImmediate(function(){
           send(str) 
-        }, 1000);  
+        });  
       }
     }).on('error', function(e){
-      setTimeout(function(){
+      setImmediate(function(){
         send(str) 
-      }, 1000);
+      });
     });
   };
 
@@ -54,7 +57,9 @@ exports.endTradingDay = function (req, res) {
     .add(sequelize.query('truncate table asks'))
     .add(sequelize.query('truncate table bids'))
     .add(sequelize.query('truncate table matchBuys'))
-    .add(sequelize.query('truncate table matchAsks'));
+    .add(sequelize.query('truncate table matchAsks'))
+    .add(sequelize.query('truncate table matchedLogs'))
+    .add(sequelize.query('truncate table rejectedLogs'));
 
   chainer
     .run()
@@ -88,9 +93,10 @@ exports.create = function(req, res) {
           return User.update({ creditUsed: newCredit }, 
           {
             where: { userId: user.userId },
-            transaction: t
+            transaction: t,
+            returning: false
           }).then(function(d){
-            return Bid.create(req.body, { transaction: t });                    
+            return Bid.create(req.body, { returning: false, transaction: t });                    
           });
         }).then(function(){
           // Success
@@ -103,9 +109,9 @@ exports.create = function(req, res) {
         });
       } else {
         // New user
-        User.create({ userId: data.userId, creditUsed: data.price * 1000 })
+        User.create({ userId: data.userId, creditUsed: data.price * 1000 }, { returning: false })
           .success(function(){
-            Bid.create(req.body)
+            Bid.create(req.body, { returning: false })
             .success(function(){
               res.json(201, { status: 'success'});
               matcher.attemptMatch(req.body.stock);

@@ -16,19 +16,21 @@ var logMatched = function (matched) {
 
   var host = 0;
   var send = function(str){
-    var url = 'http://' + backendWorkers[host++%2] + '/log/match?data=' + str;
+    var hostPort = backendWorkers[host++%2].split(':');
+    var url = 'http://' + hostPort.join(':') + '/log/match?data=' + str;
     console.log('try send: ' + url);
-    http.get(url, function(response){
+
+    http.get({ host: 'localhost', port: hostPort[1], path: '/log/match?data=' + str, agent: false }, function(response){
       console.log("Backend worker response: " + response.statusCode);
       if (response.statusCode === 500) {
-        setTimeout(function(){
-          send(str) 
-        }, 1000);  
+        setImmediate(function(){
+          send(str); 
+        });  
       }
     }).on('error', function(e){
-      setTimeout(function(){
-        send(str) 
-      }, 1000);
+      setImmediate(function(){
+        send(str); 
+      });
     });
   };
 
@@ -73,7 +75,8 @@ exports.attemptMatch = function (stock) {
           buyer: highestBid.userId,
           seller: lowestAsk.userId
         }, {
-          transaction: t
+          transaction: t,
+          returning: false
         }).then(function(){
           return MatchAsk.create({
             matchedAsk: lowestAsk.id,
@@ -84,7 +87,8 @@ exports.attemptMatch = function (stock) {
             buyer: highestBid.userId,
             seller: lowestAsk.userId
           }, {
-            transaction: t
+            transaction: t,
+            returning: false
           })
         }).then(function(){
           return Bid.destroy({

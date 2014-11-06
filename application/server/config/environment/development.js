@@ -10,7 +10,8 @@ module.exports = {
   },
 
   postgres: {
-    uri: 'postgresql://postgres@localhost:5432/stocks_exchange'
+    uri: 'postgresql://postgres:password@192.168.2.100:5432/stocks_exchange'
+    // uri: 'postgresql://postgres@localhost:5432/stocks_exchange'
   },
 
   mysql: {

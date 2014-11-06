@@ -5,14 +5,17 @@ if (!global.hasOwnProperty('db')) {
   var sequelize;
 
   if (process.env.DB_TYPE === 'mysql') {
-    sequelize = new Sequelize(config.mysql.uri, {
+    sequelize = new Sequelize('stocks_exchange', 'root', null, {
+      // host: '192.168.2.69',
+      // port: '3307',
       maxConcurrentRequest: 5000,
-      dialect: 'mysql'
+      // dialect: 'mariadb'
     });
   } else {    
     sequelize = new Sequelize(config.postgres.uri, {
       maxConcurrentRequest: 5000,
-      dialect: 'postgres'
+      dialect: 'postgres',
+      native: true
     });
   }
 
